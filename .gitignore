@@ -243,6 +243,9 @@ FakesAssemblies/
 _Pvt_Extensions
 
 # Paket dependency manager
+*.map
+*.js
+
 .paket/paket.exe
 paket-files/
 
@@ -259,3 +262,5 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/PlugDjSharkbot/config/default.json
+/PlugDjSharkbot/package-lock.json
