@@ -1,0 +1,12 @@
+{
+  "name": "plug-dj-sharkbot",
+  "version": "0.0.0",
+  "description": "PlugDjSharkbot",
+  "main": "app.js",
+  "author": {
+    "name": "sharknice"
+  },
+  "devDependencies": {
+    "@types/node": "^6.0.87"
+  }
+}
