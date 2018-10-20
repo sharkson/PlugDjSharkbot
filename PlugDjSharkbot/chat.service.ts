@@ -3,26 +3,47 @@ var Request = require("request");
 
 import { Chat } from './models/chat.model';
 import { ChatRequest } from './models/chat-request.model';
+import { ResponseRequest } from './models/response-request.model';
 
 export class ChatService {
-    conversationName = 'plugdj-' + config.get('room') + "-" + Date.now();
+    update(msg: string, userName: string, conversationName: string) {
+        return new Promise(function (resolve, reject) {
+            var chat = new Chat('sharkbot', msg, userName, Date.now().toString());
+            var chatRequest = new ChatRequest(chat, 'plugdj', conversationName, [], [], []);
+            var requestBody = JSON.stringify(chatRequest);
 
-    update(msg: string, userName: string) {
-        var chat = new Chat('sharkbot', msg, userName, Date.now().toString());
-        var chatRequest = new ChatRequest(chat, 'plugdj', this.conversationName, [], [], []);
-        var requestBody = JSON.stringify(chatRequest);
+            Request.put({
+                "rejectUnauthorized": false,
+                "headers": { "content-type": "application/json" },
+                "url": config.get('api') + "/api/chatupdate",
+                "body": requestBody
+            }, (error, response, body) => {
+                if (error) {
+                    console.log(error);
+                    resolve(false);
+                }
+                resolve(true);
+            });
+        });
+    }
 
-        Request.put({
-            "rejectUnauthorized": false,
-            "headers": { "content-type": "application/json" },
-            "url": config.get('api') + "/api/chatupdate",
-            "body": requestBody
-        }, (error, response, body) => {
-            if (error) {
-                return console.log(error);
-            }
-            console.log(JSON.parse(body));
+    getResponse(conversationName: string) {
+        return new Promise(function (resolve, reject) {
+            var chatRequest = new ResponseRequest('plugdj', conversationName, [], [], []);
+            var requestBody = JSON.stringify(chatRequest);
+
+            Request.put({
+                "rejectUnauthorized": false,
+                "headers": { "content-type": "application/json" },
+                "url": config.get('api') + "/api/response",
+                "body": requestBody
+            }, (error, response, body) => {
+                if (error) {
+                    console.log(error);
+                    resolve(null);
+                }
+                resolve(JSON.parse(body));
+            });
         });
     }
 }
-
