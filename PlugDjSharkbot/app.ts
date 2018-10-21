@@ -34,13 +34,13 @@ function shouldRespond(response, data) {
         return true;
     }
 
-    if (data.message.includes(bot.getSelf().username)) {
+    if (data.message.toLowerCase().includes(bot.getSelf().username.toLowerCase())) {
         return true;
     }
 
     var shouldRespond = false;
     config.get('bot.nickNames').forEach(function (nickName) {
-        if (data.message.includes(nickName)) {
+        if (data.message.toLowerCase().includes(nickName.toLowerCase())) {
             shouldRespond = true;
         }
     });
