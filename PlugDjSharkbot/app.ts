@@ -24,7 +24,15 @@ function ignoreMessage(data) {
         if (config.get('bot.ignoreUsers').includes(data.from.username)) {
             return true;
         }
-        return false;
+
+        var ignore = false;
+        config.get('bot.ignoreCommands').forEach(function (command) {
+            if (data.message.startsWith(command)) {
+                ignore = true;
+            }
+        });
+
+        return ignore;
     }
     return true;
 }
