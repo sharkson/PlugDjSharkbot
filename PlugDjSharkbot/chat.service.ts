@@ -6,9 +6,9 @@ import { ChatRequest } from './models/chat-request.model';
 import { ResponseRequest } from './models/response-request.model';
 
 export class ChatService {
-    update(msg: string, userName: string, conversationName: string) {
+    update(msg: string, userName: string, conversationName: string, botName: string) {
         return new Promise(function (resolve, reject) {
-            var chat = new Chat('sharkbot', msg, userName, Date.now().toString());
+            var chat = new Chat(botName, msg, userName, Date.now().toString());
             var chatRequest = new ChatRequest(chat, 'plugdj', conversationName, [], [], []);
             var requestBody = JSON.stringify(chatRequest);
 

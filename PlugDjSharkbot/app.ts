@@ -8,32 +8,54 @@ var conversationName = 'plugdj-' + config.get('room') + "-" + Date.now();
 
 async function readMessage(data) {
     console.log(data.from + ': ' + data.message);
-    if (data.message && data.from && data.from.username) {
-        var updated = await chatService.update(data.message, data.from.username, conversationName);
-        if (updated && shouldRespond(data)) {
+    if (!ignoreMessage(data)) {
+        var updated = await chatService.update(data.message, data.from.username, conversationName, bot.getSelf().username);
+        if (updated && data.from.username != bot.getSelf().username) {
             var response = await chatService.getResponse(conversationName);
-            useResponse(response);
+            if (shouldRespond(response, data)) {
+                useResponse(response);
+            }         
         }
     }
 }
 
-function shouldRespond(data) {
-    if (data.from.username == bot.getSelf().username) {
+function ignoreMessage(data) {
+    if (data.message && data.from && data.from.username) {
+        if (config.get('bot.ignoreUsers').includes(data.from.username)) {
+            return true;
+        }
         return false;
     }
     return true;
 }
 
-function useResponse(response) {
+function shouldRespond(response, data) {
     if (response.confidence > config.get('bot.confidenceThreshold')) {
-        var typeTime = 0;
-        response.response.forEach(function (chat) {
-            typeTime += getTypeTime(chat);
-            setTimeout(function () {
-                bot.sendChat(chat);
-            }, typeTime);
-        });
+        return true;
     }
+
+    if (data.message.includes(bot.getSelf().username)) {
+        return true;
+    }
+
+    var shouldRespond = false;
+    config.get('bot.nickNames').forEach(function (nickName) {
+        if (data.message.includes(nickName)) {
+            shouldRespond = true;
+        }
+    });
+
+    return shouldRespond;
+}
+
+function useResponse(response) {
+    var typeTime = 0;
+    response.response.forEach(function (chat) {
+        typeTime += getTypeTime(chat);
+        setTimeout(function () {
+            bot.sendChat(chat);
+        }, typeTime);
+    });
 }
 
 function getTypeTime(message) {
