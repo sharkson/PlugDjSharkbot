@@ -84,3 +84,11 @@ bot.on(PlugAPI.events.ROOM_JOIN, (room) => {
 bot.on(PlugAPI.events.CHAT, (data) => {
     readMessage(data);
 });
+
+bot.on(PlugAPI.events.ADVANCE, (data) => {
+    if (config.get('bot.autoWoot')) {
+        setTimeout(function () {
+            bot.woot();
+        }, 3000 + (Math.random() * 20000));
+    }
+});
